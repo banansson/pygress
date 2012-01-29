@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+import time
 from progbar import *
 from webclient import WebClient
 
@@ -23,8 +24,9 @@ if __name__ == '__main__':
 
     size = int(args[2])
     bar = ProgBar(size)
-    for n in range(size + 1):
+    for n in range(100, size + 1, 50):
       bar.update(n)
+      time.sleep(0.005)
       bar.render()
     print "--> done"
     exit()

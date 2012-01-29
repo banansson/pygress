@@ -30,10 +30,9 @@ class ProgBar:
     count = int(math.ceil(self.progress * 25))
     segments = ''.join(['=' for num in xrange(count)])
     bar = "%3.0f%% [%-25s] %d/%d" % (percent, segments, self.current, self.size)
-    if not self.done():
-      self._write(bar + "\r")
-    else:
-      self._write(bar + "\n")
+    self._write(bar)
+    if self.done():
+      self._write("\n")
 
   def done(self):
     return self.progress == 1
@@ -42,6 +41,6 @@ class ProgBar:
     return self.last_known != self.current
 
   def _write(self, output):
-    self.out.write(output)
+    self.out.write("\r" + output)
     self.out.flush()
 
