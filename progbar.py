@@ -5,17 +5,52 @@ import math
 
 class ProgressBarFactory:
 
-  def create(self, size):
-    return ProgBar(size)
+  def create(self, components, size):
+    return ProgressBar(components, size)
 
-class ProgBar:
+  def create_default(self, size):
+    return ProgressBar([Percentage(), Bar()], size)
 
-  def __init__(self, size, out=sys.stderr):
+class ProgressBarComponent(object):
+
+  def update(self, progress):
+    pass
+
+  def render():
+    pass
+
+class Percentage(ProgressBarComponent):
+
+    def __init__(self):
+      self.output = 0
+
+    def update(self, progress):
+      self.outout = progress * 100
+
+    def render(self):
+      return "%.0f%%" % self.outout
+
+class Bar(ProgressBarComponent):
+
+    def __init__(self):
+      self.output = 0
+
+    def update(self, progress):
+      count = int(math.ceil(progress * 25))
+      self.output = ''.join(['=' for num in xrange(count)])
+
+    def render(self):
+      return "[%-25s]" % self.output
+
+class ProgressBar:
+
+  def __init__(self, components, size, out=sys.stderr):
     self.size = size
     self.current = 0
     self.last_known = 0
     self.progress = 0
     self.out = out
+    self.components = components
 
   def update(self, current):
     self.current = current
@@ -27,9 +62,11 @@ class ProgBar:
 
   def render(self):
     percent = self.progress * 100
-    count = int(math.ceil(self.progress * 25))
-    segments = ''.join(['=' for num in xrange(count)])
-    bar = "%3.0f%% [%-25s] %d/%d" % (percent, segments, self.current, self.size)
+    bar = ''
+    for i, c in enumerate(self.components):
+      c.update(self.progress)
+      bar += c.render()
+
     self._write(bar)
     if self.done():
       self._write("\n")

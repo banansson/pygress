@@ -22,8 +22,9 @@ if __name__ == '__main__':
       print " -> can't fake without a value"
       exit()
 
+    components = [Percentage(), Bar()]
     size = int(args[2])
-    bar = ProgBar(size)
+    bar = ProgressBar(components, size)
     for n in range(100, size + 1, 50):
       bar.update(n)
       time.sleep(0.005)
