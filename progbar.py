@@ -25,10 +25,10 @@ class Percentage(ProgressBarComponent):
       self.output = 0
 
     def update(self, progress):
-      self.outout = progress * 100
+      self.outout = progress.progress * 100
 
     def render(self):
-      return "%.0f%%" % self.outout
+      return "%3.0f%%" % self.outout
 
 class Bar(ProgressBarComponent):
 
@@ -36,11 +36,40 @@ class Bar(ProgressBarComponent):
       self.output = 0
 
     def update(self, progress):
-      count = int(math.ceil(progress * 25))
+      count = int(math.ceil(progress.progress * 25))
       self.output = ''.join(['=' for num in xrange(count)])
 
     def render(self):
       return "[%-25s]" % self.output
+
+class Remaining(object):
+
+  def __init__(self):
+    self.size = 0
+    self.output = 0
+
+  def update(self, progress):
+    reverse_progress = 1 - progress.progress
+    self.size = reverse_progress * progress.size
+
+  def render(self):
+    (self.output, postfix) = self._scale(self.size)
+    return "%4d %-2s" % (self.output, postfix)
+
+  def _scale(self, size):
+    kilobyte = 1024
+    megabyte = kilobyte * 1024
+    terabyte = megabyte * 1024
+    petabyte = terabyte * 1024
+
+    if (size < kilobyte):
+      return (size, 'B')
+    if (size < megabyte):
+      return (size / kilobyte, 'kB')
+    if (size < terabyte):
+      return (size / megabyte, 'MB')
+    if (size < petabyte):
+      return (size / terabyte, 'GB')
 
 class ProgressBar:
 
@@ -62,12 +91,12 @@ class ProgressBar:
 
   def render(self):
     percent = self.progress * 100
-    bar = ''
+    row = ''
     for i, c in enumerate(self.components):
-      c.update(self.progress)
-      bar += c.render()
+      c.update(self)
+      row += c.render() + ' '
 
-    self._write(bar)
+    self._write(row)
     if self.done():
       self._write("\n")
 

@@ -22,7 +22,7 @@ if __name__ == '__main__':
       print " -> can't fake without a value"
       exit()
 
-    components = [Percentage(), Bar()]
+    components = [Percentage(), Bar(), Remaining()]
     size = int(args[2])
     bar = ProgressBar(components, size)
     for n in range(100, size + 1, 50):
@@ -36,6 +36,7 @@ if __name__ == '__main__':
   client = WebClient(ProgressBarFactory())
 
   try:
-      client.get(url) #, bar.render)
+      client.get(url)
   except KeyboardInterrupt:
     print "\nUser canceled download"
+
