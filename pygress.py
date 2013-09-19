@@ -37,7 +37,7 @@ class Bar(ProgressBarComponent):
 
     def update(self, progress):
       count = int(math.ceil(progress.progress * 25))
-      self.output = ''.join(['=' for num in xrange(count)])
+      self.output = ''.join(['=' for num in range(count)])
 
     def render(self):
       return "[%-25s]" % self.output

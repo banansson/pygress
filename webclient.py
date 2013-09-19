@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import urllib2
+import urllib3
 
 class WebClient:
 
