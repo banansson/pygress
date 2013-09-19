@@ -41,4 +41,3 @@ if __name__ == '__main__':
   except KeyboardInterrupt:
     print("\nUser canceled download")
 
-  exit(0)
