@@ -2,7 +2,7 @@
 
 import sys
 import time
-from progbar import *
+from pygress import *
 from webclient import WebClient
 
 def usage(me):
