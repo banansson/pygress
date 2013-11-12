@@ -2,6 +2,8 @@
 
 import sys
 import time
+# add src dir to import dir collection
+sys.path.append('../../src')
 from pygress import *
 from webclient import WebClient
 
