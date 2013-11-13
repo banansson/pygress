@@ -2,7 +2,6 @@
 
 import sys
 import time
-# add src dir to import dir collection
 sys.path.append('../../src')
 from pygress import *
 from webclient import WebClient
@@ -25,7 +24,7 @@ if __name__ == '__main__':
       print(" -> can't fake without a value")
       exit()
 
-    components = [Percentage(), Bar(), Remaining()]
+    components = [Remaining(), Bar(), Percentage()]
     size = int(args[2])
     bar = ProgressBar(components, size)
     for n in range(100, size + 1, 50):

@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-import urllib3
+from http import client
+from urllib.parse import urlparse
 
 class WebClient:
 
@@ -8,17 +9,26 @@ class WebClient:
     self.pbf = factory
 
   def get(self, url):
-    file_name = url.split('/')[-1]
-    source = urllib2.urlopen(url)
-    target = open(file_name, "wb")
-    info = source.info()
-    size = int(info.getheaders("Content-Length")[0])
+    u = urlparse(url)
+    #host = '{:s}://{:s}'.format(u.scheme, u.netloc)
+    host = u.netloc
+    path = u.path
+    print(host + " " + path)
 
-    bar = self.pbf.create(size)
+    file_name = u.path.split('/')[-1]
+    print(file_name)
+
+    connection = client.HTTPConnection(host)
+    connection.request('GET', u.path)
+    response = connection.getresponse()
+    size = int(response.getheader("Content-Length"))
+
+    target = open(file_name, "wb")
+    bar = self.pbf.create_default(size)
     current = 0
-    block_sz = 8192
+    block_size = 8192
     while True:
-      buffer = source.read(block_sz)
+      buffer = response.read(block_size)
       if not buffer:
         break;
 
@@ -27,5 +37,5 @@ class WebClient:
       bar.update(current)
       bar.render()
 
-    target.close()
+    connection.close()
 

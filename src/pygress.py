@@ -3,7 +3,7 @@
 import sys
 import math
 
-class ProgressBarFactory:
+class ProgressBarFactory(object):
 
   def create(self, components, size):
     return ProgressBar(components, size)
@@ -32,15 +32,21 @@ class Percentage(ProgressBarComponent):
 
 class Bar(ProgressBarComponent):
 
-    def __init__(self):
+    def __init__(self, background='-', tick='#'):
+      self.background = background
+      self.tick = tick
+      self.size = 32
       self.output = 0
 
     def update(self, progress):
-      count = int(math.ceil(progress.progress * 25))
-      self.output = ''.join(['=' for num in range(count)])
+      count = int(math.ceil(progress.progress * self.size))
+      done = ''.join([self.tick for num in range(count)])
+      left = ''.join([self.background for num in range(self.size - len(done))])
+      self.output = done + left
 
     def render(self):
-      return "[%-25s]" % self.output
+      form = "[%-{:d}s]".format(self.size)
+      return form % self.output
 
 class Remaining(object):
 
