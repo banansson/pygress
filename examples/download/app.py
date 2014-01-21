@@ -6,6 +6,13 @@ sys.path.append('../../src')
 from pygress import *
 from webclient import WebClient
 
+def run_download(components, size):
+  bar = ProgressBar(components, size)
+  for n in range(100, size + 1, 50):
+    bar.update(n)
+    time.sleep(0.005)
+    bar.render()
+
 def usage(me):
   print("usage: %s [<file>|fake <size>]" % me)
 
@@ -24,13 +31,12 @@ if __name__ == '__main__':
       print(" -> can't fake without a value")
       exit()
 
-    components = [Remaining(), Bar(), Percentage()]
-    size = int(args[2])
-    bar = ProgressBar(components, size)
-    for n in range(100, size + 1, 50):
-      bar.update(n)
-      time.sleep(0.005)
-      bar.render()
+    components = [
+	[Label("some.file.with.a.long.name.that.need.to.be.capped"), Remaining(), Bar(), Percentage()],
+        [Label("some.file", 32), Remaining(), Bar(), Percentage()]]
+    for c in components:
+      run_download(c, int(args[2]))
+
     print("--> done")
     exit()
 

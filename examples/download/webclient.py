@@ -24,7 +24,7 @@ class WebClient:
     size = int(response.getheader("Content-Length"))
 
     target = open(file_name, "wb")
-    bar = self.pbf.create_default(size)
+    bar = self.pbf.create_file_download(file_name, size)
     current = 0
     block_size = 8192
     while True:

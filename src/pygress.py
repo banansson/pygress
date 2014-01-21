@@ -11,6 +11,9 @@ class ProgressBarFactory(object):
   def create_default(self, size):
     return ProgressBar([Percentage(), Bar()], size)
 
+  def create_file_download(self, name, size):
+    return self.create([Label(name), Bar(), Percentage()], size)
+
 class ProgressBarComponent(object):
 
   def update(self, progress):
@@ -18,6 +21,21 @@ class ProgressBarComponent(object):
 
   def render():
     pass
+
+class Label(ProgressBarComponent):
+
+  def __init__(self, text, max_chars=32):
+    self.max_chars = max_chars
+    self.output = self._format(text)
+
+  def _format(self, text):
+    full_format = "{0:{width}s}".format(text, width=self.max_chars)
+    capped_format = "{0:s}...".format(text[0:self.max_chars - 3])
+
+    return full_format if len(text) <= self.max_chars else capped_format
+
+  def render(self):
+    return self.output
 
 class Percentage(ProgressBarComponent):
 
