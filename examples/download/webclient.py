@@ -21,6 +21,11 @@ class WebClient:
     connection = client.HTTPConnection(host)
     connection.request('GET', u.path)
     response = connection.getresponse()
+    if (response.status != 200):
+        print("Got {} {}, expected 200 OK".format(response.status, response.reason))
+        connection.close()
+        return
+
     size = int(response.getheader("Content-Length"))
 
     target = open(file_name, "wb")
