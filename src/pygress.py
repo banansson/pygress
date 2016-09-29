@@ -2,6 +2,7 @@
 
 import sys
 import math
+import time
 
 class ProgressBarFactory(object):
 
@@ -12,7 +13,7 @@ class ProgressBarFactory(object):
     return ProgressBar([Percentage(), Bar()], size)
 
   def create_file_download(self, name, size):
-    return self.create([Label(name), Bar(), Percentage()], size)
+    return self.create([Label(name), Bar(), Speed(), Percentage()], size)
 
 class ProgressBarComponent(object):
 
@@ -66,7 +67,7 @@ class Bar(ProgressBarComponent):
       form = "[%-{:d}s]".format(self.size)
       return form % self.output
 
-class Remaining(object):
+class Remaining(ProgressBarComponent):
 
   def __init__(self):
     self.size = 0
@@ -95,6 +96,26 @@ class Remaining(object):
     if (size < petabyte):
       return (size / terabyte, 'GB')
 
+class Speed(ProgressBarComponent):
+
+    def __init__(self):
+        self.speed = 0
+        self.previous_progress = 0
+        self.previous_timestamp = time.time()
+
+    def update(self, progress):
+        now = time.time()
+        time_delta = now - self.previous_timestamp
+        progress_delta = (progress.progress * progress.size) - self.previous_progress
+        
+        self.speed = progress_delta / time_delta
+
+        self.previous_timestamp = now
+        self.previous_progress = progress.progress * progress.size
+
+    def render(self):
+        return "%.2f MB/s" % (self.speed / (1024 * 1024))
+
 class ProgressBar:
 
   def __init__(self, components, size, out=sys.stderr):
@@ -104,6 +125,7 @@ class ProgressBar:
     self.progress = 0
     self.out = out
     self.components = components
+    self.last_render = 0
 
   def update(self, current):
     self.current = current
@@ -114,13 +136,17 @@ class ProgressBar:
     self.progress = current / float(self.size)
 
   def render(self):
+    now = time.time()
     percent = self.progress * 100
     row = ''
     for i, c in enumerate(self.components):
       c.update(self)
       row += c.render() + ' '
 
-    self._write(row)
+    if now - self.last_render > 0.1:
+        self._write(row)
+        self.last_render = now
+    
     if self.done():
       self._write("\n")
 

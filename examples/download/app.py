@@ -7,10 +7,14 @@ from pygress import *
 from webclient import WebClient
 
 def run_download(components, size):
+  size = size * 1024 * 1024 # Size in MB
+  speed = 10 # Spee to aim for in MB/s
+  wait = 0.1 # Faking a network
+  chunk = int((1024 * 1024 * speed) * wait) # Fake speed by progressing a certain amount
   bar = ProgressBar(components, size)
-  for n in range(100, size + 1, 50):
+  for n in range(0, size + 1, chunk):
     bar.update(n)
-    time.sleep(0.005)
+    time.sleep(wait)
     bar.render()
 
 def usage(me):
@@ -32,8 +36,8 @@ if __name__ == '__main__':
       exit()
 
     components = [
-	[Label("some.file.with.a.long.name.that.need.to.be.capped"), Remaining(), Bar(), Percentage()],
-        [Label("some.file", 32), Remaining(), Bar(), Percentage()]]
+	[Label("some.file"), Remaining(), Speed(), Bar(), Percentage()],
+    ]
     for c in components:
       run_download(c, int(args[2]))
 
