@@ -16,6 +16,10 @@ class WebClient:
     print(host + " " + path)
 
     file_name = u.path.split('/')[-1]
+
+    if path == '/':
+        file_name = 'temp.file'
+
     print(file_name)
 
     connection = client.HTTPConnection(host)
