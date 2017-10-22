@@ -36,12 +36,11 @@ if __name__ == '__main__':
       exit()
 
     components = [
-	[Label("some.file"), Remaining(), Speed(), Bar(), Percentage()],
+      [Label("some.file"), Remaining(), Speed(), Bar(), Percentage()],
     ]
     for c in components:
       run_download(c, int(args[2]))
 
-    print("--> done")
     exit()
 
   url = sys.argv[1]
@@ -51,4 +50,3 @@ if __name__ == '__main__':
       client.get(url)
   except KeyboardInterrupt:
     print("\nUser canceled download")
-

@@ -13,7 +13,7 @@ class ProgressBarFactory(object):
     return ProgressBar([Percentage(), Bar()], size)
 
   def create_file_download(self, name, size):
-    return self.create([Label(name), Bar(), Speed(), Percentage()], size)
+    return self.create([Label(name), Remaining(), Bar(), Speed(), Percentage()], size)
 
 class ProgressBarComponent(object):
 
@@ -107,7 +107,7 @@ class Speed(ProgressBarComponent):
         now = time.time()
         time_delta = now - self.previous_timestamp
         progress_delta = (progress.progress * progress.size) - self.previous_progress
-        
+
         self.speed = progress_delta / time_delta
 
         self.previous_timestamp = now
@@ -129,9 +129,6 @@ class ProgressBar:
 
   def update(self, current):
     self.current = current
-    if not self._update_required() or self.done():
-      return
-
     self.last_known = current
     self.progress = current / float(self.size)
 
@@ -146,7 +143,7 @@ class ProgressBar:
     if now - self.last_render > 0.1:
         self._write(row)
         self.last_render = now
-    
+
     if self.done():
       self._write("\n")
 
@@ -159,4 +156,3 @@ class ProgressBar:
   def _write(self, output):
     self.out.write("\r" + output)
     self.out.flush()
-

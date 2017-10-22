@@ -10,17 +10,12 @@ class WebClient:
 
   def get(self, url):
     u = urlparse(url)
-    #host = '{:s}://{:s}'.format(u.scheme, u.netloc)
     host = u.netloc
     path = u.path
-    print(host + " " + path)
-
     file_name = u.path.split('/')[-1]
 
     if path == '/':
         file_name = 'temp.file'
-
-    print(file_name)
 
     connection = client.HTTPConnection(host)
     connection.request('GET', u.path)
@@ -31,7 +26,6 @@ class WebClient:
         return
 
     size = int(response.getheader("Content-Length"))
-
     target = open(file_name, "wb")
     bar = self.pbf.create_file_download(file_name, size)
     current = 0
@@ -39,7 +33,11 @@ class WebClient:
     while True:
       buffer = response.read(block_size)
       if not buffer:
-        break;
+        if current == size:
+            bar.update(size)
+            bar.render()
+            print("Done: {} of {}".format(current, size))
+        break
 
       target.write(buffer)
       current += len(buffer)
@@ -47,4 +45,3 @@ class WebClient:
       bar.render()
 
     connection.close()
-
