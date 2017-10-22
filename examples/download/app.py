@@ -47,6 +47,6 @@ if __name__ == '__main__':
   client = WebClient(ProgressBarFactory())
 
   try:
-      client.get(url)
+    client.get(url)
   except KeyboardInterrupt:
     print("\nUser canceled download")
