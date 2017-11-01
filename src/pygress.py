@@ -51,21 +51,21 @@ class Percentage(ProgressBarComponent):
 
 class Bar(ProgressBarComponent):
 
-    def __init__(self, background='-', tick='#'):
-      self.background = background
-      self.tick = tick
-      self.size = 32
-      self.output = 0
+  def __init__(self, background='-', tick='#'):
+    self.background = background
+    self.tick = tick
+    self.size = 32
+    self.output = 0
 
-    def update(self, progress):
-      count = int(math.ceil(progress.progress * self.size))
-      done = ''.join([self.tick for num in range(count)])
-      left = ''.join([self.background for num in range(self.size - len(done))])
-      self.output = done + left
+  def update(self, progress):
+    count = int(math.ceil(progress.progress * self.size))
+    done = ''.join([self.tick for num in range(count)])
+    left = ''.join([self.background for num in range(self.size - len(done))])
+    self.output = done + left
 
-    def render(self):
-      form = "[%-{:d}s]".format(self.size)
-      return form % self.output
+  def render(self):
+    form = "[%-{:d}s]".format(self.size)
+    return form % self.output
 
 class Remaining(ProgressBarComponent):
 
@@ -99,19 +99,18 @@ class Remaining(ProgressBarComponent):
 class Speed(ProgressBarComponent):
 
     def __init__(self):
-        self.speed = 0
-        self.previous_progress = 0
-        self.previous_timestamp = time.time()
+      self.speed = 0
+      self.previous_progress = 0
+      self.previous_timestamp = time.time()
 
     def update(self, progress):
-        now = time.time()
-        time_delta = now - self.previous_timestamp
-        progress_delta = (progress.progress * progress.size) - self.previous_progress
+      now = time.time()
+      time_delta = now - self.previous_timestamp
+      progress_delta = (progress.progress * progress.size) - self.previous_progress
 
-        self.speed = progress_delta / time_delta
-
-        self.previous_timestamp = now
-        self.previous_progress = progress.progress * progress.size
+      self.speed = progress_delta / time_delta
+      self.previous_timestamp = now
+      self.previous_progress = progress.progress * progress.size
 
     def render(self):
         return "%.2f MB/s" % (self.speed / (1024 * 1024))
@@ -141,8 +140,8 @@ class ProgressBar:
       row += c.render() + ' '
 
     if now - self.last_render > 0.1:
-        self._write(row)
-        self.last_render = now
+      self._write(row)
+      self.last_render = now
 
     if self.done():
       self._write("\n")
